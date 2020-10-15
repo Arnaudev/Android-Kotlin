@@ -4,4 +4,5 @@
     <string name="lastname">lastnames</string>
     <string name="jobtitle">jobtitles</string>
     <string name="employee_information">employeeInfo</string>
+    <string name="basic_text">loream...</string>
 </resources>

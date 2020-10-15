@@ -2,13 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/employeeInfoTextView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:orientation="vertical"
@@ -25,10 +24,11 @@
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="match_parent"
+                android:layout_width="209dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/employee1" />
+                app:srcCompat="@drawable/employee1"
+                android:contentDescription="TODO" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -38,7 +38,7 @@
 
                 <TextView
                     android:id="@+id/firstnameTextView"
-                    android:layout_width="match_parent"
+                    android:layout_width="152dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/firstname"
@@ -70,7 +70,7 @@
 
     <LinearLayout
         android:id="@+id/LinearLayout2"
-        android:layout_width="409dp"
+        android:layout_width="match_parent"
         android:layout_height="20dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -84,15 +84,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="numberClicked"
             android:text="1"
             android:textAlignment="center" />
-            android:onClick="numberClicked"/>
+
 
         <TextView
             android:id="@+id/button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="numberClicked"
             android:text="2"
             android:textAlignment="center" />
 
@@ -101,6 +103,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="numberClicked"
             android:text="3"
             android:textAlignment="center" />
 
@@ -109,6 +112,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="numberClicked"
             android:text="4"
             android:textAlignment="center" />
 
@@ -117,6 +121,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="numberClicked"
             android:text="5"
             android:textAlignment="center" />
 

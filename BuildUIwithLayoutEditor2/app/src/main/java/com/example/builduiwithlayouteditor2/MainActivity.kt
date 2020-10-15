@@ -6,14 +6,13 @@ import android.widget.TextView
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
-
 class MainActivity : AppCompatActivity() {
 
 
     //Define info list into array
 
     val firstnames = arrayOf("Antti", "Mikko", "Roger","Mike","Juha")
-    val lastnames = arrayOf("Suomalianen", "Pekonen", "Ikkunen","Jackson","Perkele")
+    val lastnames = arrayOf("Suomalainen", "Pekonen", "Ikkunen","Jackson","Perkele")
     val jobtitles = arrayOf("Genius at time", "CEO of nothing", "Captain of his imaginary ship","Busy discovering dark matter","?")
 
 
@@ -31,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         firstnameTextView.text = firstnames[index]
         lastnameTextView.text = lastnames[index]
         jobtitleTextView.text = jobtitles[index]
-      //  employeeInfoTextView.text = lastnames[index] + " " + firstnames[index] + "is . . . ." + getString(R.string.basic_text)
+        employeeInfoTextView.text = lastnames[index] + " " + firstnames[index] + " is . . . ." + getString(R.string.basic_text)
         //load and show image for resources
         var id = 0
         if (index == 0) id = R.drawable.employee1
