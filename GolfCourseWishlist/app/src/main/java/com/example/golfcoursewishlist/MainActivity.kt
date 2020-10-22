@@ -3,9 +3,7 @@ package com.example.golfcoursewishlist
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -13,23 +11,53 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.row_places.view.*
+import java.util.*
+import kotlin.collections.ArrayList
 
-
+private var isListView = true
+private var mStaggeredLayoutManager: StaggeredGridLayoutManager? = null
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         // Use StaggeredGridLayoutManager as a layout manager for recyclerView
 
-        recyclerView.layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
-        // Use GolfCourseWishlistAdapter as a adapter for recyclerView
+        mStaggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+        recyclerView.layoutManager = mStaggeredLayoutManager
 
+        // Use GolfCourseWishlistAdapter as a adapter for recyclerView
         recyclerView.adapter = GolfCourseWishlistAdapter(Places.placeList())
+
     }
-}
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_toggle -> {
+                if (isListView) {
+                    item.setIcon(R.drawable.ic_view_stream_white_24dp)
+                    item.title = "Show as list"
+                    isListView = false
+                    mStaggeredLayoutManager?.spanCount = 2
+                } else {
+                    item.setIcon(R.drawable.ic_view_column_white_24dp)
+                    item.title = "Show as grid"
+                    isListView = true
+                    mStaggeredLayoutManager?.spanCount = 1
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+    }
+
 
 class Place {
     var name: String? = null
@@ -44,7 +72,7 @@ class Places {
     // like "static" in other OOP languages
     companion object {
         // hard code a few places
-        var placeNameArray = arrayOf(
+        private var placeNameArray = arrayOf(
                 "Black Mountain",
                 "Chambers Bay",
                 "Clear Water",
@@ -61,7 +89,8 @@ class Places {
             for (i in placeNameArray.indices) {
                 val place = Place()
                 place.name = placeNameArray[i]
-                place.image = placeNameArray[i].replace("\\s+".toRegex(), "").toLowerCase()
+                place.image =
+                    placeNameArray[i].replace("\\s+".toRegex(), "").toLowerCase(Locale.ROOT)
                 list.add(place)
             }
             return list
@@ -85,7 +114,7 @@ class GolfCourseWishlistAdapter(private val places: ArrayList<Place>)
 
     override fun onBindViewHolder(holder: GolfCourseWishlistAdapter.ViewHolder, position: Int) {
         // place to bind UI
-        val place: Place = places.get(position)
+        val place: Place = places[position]
         // name
         holder.nameTextView.text = place.name
         // image
