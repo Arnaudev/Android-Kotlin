@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.employee_item.view.*
+import com.bumptech.glide.Glide
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -21,6 +23,11 @@ class EmployeesAdapter(private val employees: JSONArray)
         // View Holder class to hold UI views
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val nameTextView: TextView = view.nameTextView
+            val titleTextView: TextView = view.titleTextView
+            val emailTextView: TextView = view.emailTextView
+            val phoneTextView: TextView = view.phoneTextView
+            val departmentTextView: TextView = view.departmentTextView
+            val photoImageView: ImageView = view.photoImageView
 }
 
     @SuppressLint("SetTextI18n")
@@ -32,6 +39,14 @@ class EmployeesAdapter(private val employees: JSONArray)
         val employee: JSONObject = employees.getJSONObject(position)
         // employee lastname and firstname
         holder.nameTextView.text = employee["lastName"].toString() + " " + employee["firstName"].toString()
+        // title, email, phone, department, image
+        holder.titleTextView.text = employee["title"].toString()
+        holder.emailTextView.text = employee["email"].toString()
+        holder.phoneTextView.text = employee["phone"].toString()
+        holder.departmentTextView.text = employee["department"].toString()
+        // to get context in Glide, you can use holder.imageView.context
+        val imageUrl = employee["image"].toString()
+        Glide.with(holder.itemView).load(imageUrl).centerCrop().into(holder.photoImageView);
     }
     // Return item count in employees
     override fun getItemCount(): Int = employees.length()
