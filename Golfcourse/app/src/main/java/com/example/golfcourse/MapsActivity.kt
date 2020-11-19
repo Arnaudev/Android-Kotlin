@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
+import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -19,34 +20,64 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.ClusterManager
 import kotlinx.android.synthetic.main.info_window.view.*
 import org.json.JSONArray
+import org.json.JSONObject
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
+    private val TAG = "MapsActivity"
     private lateinit var mMap: GoogleMap
-    private val TAG = "mapsActivity"
+
+    companion object {
+        val courseTypes: Map<String, Float> = mapOf(
+            "?" to BitmapDescriptorFactory.HUE_VIOLET,
+            "Etu" to BitmapDescriptorFactory.HUE_BLUE,
+            "Kulta" to BitmapDescriptorFactory.HUE_GREEN,
+            "Kulta/Etu" to BitmapDescriptorFactory.HUE_YELLOW
+        )
+    }
 
     // Declare a variable for the cluster manager.
-    private lateinit var clusterManager: ClusterManager<MyClusterItem>
+    private lateinit var mClusterManager: ClusterManager<GolfCourseItem>
 
     private fun setUpClusterer() {
         // Position the map.
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(51.503186, -0.126446), 10f))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(65.5, 26.0), 5.0F))
 
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
-        clusterManager = ClusterManager(this, mMap)
+        mClusterManager = ClusterManager(this, mMap)
+        mClusterManager.setRenderer(GolfCourseMarkerClusterRenderer(this, mMap, mClusterManager))
 
+        // Add a custom InfoWindowAdapter by setting it to the MarkerManager.Collection object from
+        // ClusterManager rather than from GoogleMap.setInfoWindowAdapter
+        mClusterManager.getMarkerCollection().setInfoWindowAdapter(CustomInfoWindowAdapter())
 
-        // Point the map's listeners at the listeners implemented by the cluster
-        // manager.
-        mMap.setOnCameraIdleListener(clusterManager)
-        mMap.setOnMarkerClickListener(clusterManager)
-
-        // Add cluster items (markers) to the cluster manager.
-        addItems()
+        // Point the map's listeners at the listeners implemented by the cluster manager.
+        mMap.setOnCameraIdleListener(mClusterManager)
+        mMap.setOnMarkerClickListener(mClusterManager)
+        mMap.setOnInfoWindowClickListener(mClusterManager)
     }
 
+    private fun addCourseToMap(course: JSONObject) {
+
+        val lat = course["lat"].toString().toDouble()
+        val lng = course["lng"].toString().toDouble()
+        val type = course["type"].toString()
+        val title = course["course"].toString()
+        val address = course["address"].toString()
+        val phone = course["phone"].toString()
+        val email = course["email"].toString()
+        val web_url = course["web"].toString()
+
+        if (courseTypes.containsKey(type)){
+            val offsetItem = GolfCourseItem(lat, lng, title, "", type, address, phone, email, web_url)
+            mClusterManager.addItem(offsetItem)
+            mClusterManager.cluster()
+        } else {
+            Log.d(TAG, "This course type does not exist in evaluation ${type}")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,100 +99,38 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        loadData()
-
         setUpClusterer()
+        loadData()
     }
-
-   private fun addItems() {
-
-        // Set some lat/lng coordinates to start with.
-        var lat = 51.5145160
-        var lng = -0.1270060
-
-        // Add ten cluster items in close proximity, for purposes of this example.
-        for (i in 0..30) {
-            val offset = i / 60.0
-            lat += offset
-            lng += offset
-            val offsetItem =
-                MyClusterItem(lat, lng, "Title $i", "Snippet $i")
-            clusterManager.addItem(offsetItem)
-        }
-    }
-
 
     private fun loadData() {
         val queue = Volley.newRequestQueue(this)
         val url = "https://ptm.fi/materials/golfcourses/golf_courses.json"
+        var golf_courses: JSONArray
 
         // create JSON request object
         val jsonObjectRequest = JsonObjectRequest(
             Request.Method.GET, url, null,
             { response ->
                 // JSON loaded successfully
-                var golf_courses: JSONArray
-                var course_types: Map<String, Float> = mapOf(
-                    "?" to BitmapDescriptorFactory.HUE_VIOLET,
-                    "Etu" to BitmapDescriptorFactory.HUE_BLUE,
-                    "Kulta" to BitmapDescriptorFactory.HUE_GREEN,
-                    "Kulta/Etu" to BitmapDescriptorFactory.HUE_YELLOW
-                )
                 golf_courses = response.getJSONArray("courses")
-// loop through all objects
+                // loop through all objects
                 for (i in 0 until golf_courses.length()) {
                     // get course data
                     val course = golf_courses.getJSONObject(i)
-                    val lat = course["lat"].toString().toDouble()
-                    val lng = course["lng"].toString().toDouble()
-                    val coord = LatLng(lat, lng)
-                    val type = course["type"].toString()
-                    val title = course["course"].toString()
-                    val address = course["address"].toString()
-                    val phone = course["phone"].toString()
-                    val email = course["email"].toString()
-                    val web_url = course["web"].toString()
-
-                    if (course_types.containsKey(type)) {
-                        var m = mMap.addMarker(
-                            MarkerOptions()
-                                .position(coord)
-                                .title(title)
-                                .icon(
-                                    BitmapDescriptorFactory
-                                        .defaultMarker(
-                                            course_types.getOrDefault(
-                                                type,
-                                                BitmapDescriptorFactory.HUE_RED
-                                            )
-                                        )
-                                )
-                        )
-                        // pass data to marker via Tag
-                        val list = listOf(address, phone, email, web_url)
-                        m.setTag(list)
-                    } else {
-                        Log.d(TAG, "This course type does not exist in evaluation $type")
-                    }
+                    addCourseToMap(course)
                 }
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(65.5, 26.0), 5.0F))
             },
             { error ->
                 // Error loading JSON
             }
-
         )
         // Add the request to the RequestQueue
         queue.add(jsonObjectRequest)
-        // Add custom info window adapter
-        mMap.setInfoWindowAdapter(CustomInfoWindowAdapter())
-
     }
-
 
     internal inner class CustomInfoWindowAdapter : GoogleMap.InfoWindowAdapter {
         private val contents: View = layoutInflater.inflate(R.layout.info_window, null)
-
 
         override fun getInfoWindow(marker: Marker?): View? {
             return null
@@ -176,8 +145,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             val webTextView = contents.webTextView
             // title
             titleTextView.text = marker.title.toString()
-            // get data from Tag list
-            if (marker.tag is List<*>) {
+
+            // get data from tag List
+            if (marker.tag is List<*>){
                 val list: List<String> = marker.tag as List<String>
                 addressTextView.text = list[0]
                 phoneTextView.text = list[1]
@@ -188,6 +158,3 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 }
-
-
-
