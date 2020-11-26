@@ -1,12 +1,8 @@
-package com.example.roomwordsample
+package com.example.androidroomwithaview
 
 import androidx.annotation.WorkerThread
 import kotlinx.coroutines.flow.Flow
 
-
-class WordRepository {
-    // Declares the DAO as a private property in the constructor. Pass in the DAO
-// instead of the whole database, because you only need access to the DAO
 class WordRepository(private val wordDao: WordDao) {
 
     // Room executes all queries on a separate thread.
@@ -21,6 +17,4 @@ class WordRepository(private val wordDao: WordDao) {
     suspend fun insert(word: Word) {
         wordDao.insert(word)
     }
-}
-
 }

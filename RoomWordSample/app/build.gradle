@@ -3,19 +3,14 @@ plugins {
     id 'kotlin-android'
 }
 apply plugin: 'kotlin-kapt'
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
-    // other configuration (buildTypes, defaultConfig, etc.)
-
-    packagingOptions {
-        exclude 'META-INF/atomicfu.kotlin_module'
-    }
 
     defaultConfig {
-
-        applicationId "com.example.roomwordsample"
-        minSdkVersion 29
+        applicationId "com.example.androidroomwithaview"
+        minSdkVersion 30
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -33,10 +28,14 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    packagingOptions {
+        exclude 'META-INF/atomicfu.kotlin_module'
+    }
     kotlinOptions {
         jvmTarget = '1.8'
     }
 }
+
 
 dependencies {
     implementation "androidx.appcompat:appcompat:$rootProject.appCompatVersion"
@@ -51,7 +50,6 @@ dependencies {
     androidTestImplementation "androidx.room:room-testing:$rootProject.roomVersion"
 
     // Lifecycle components
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:x.x.x"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-common-java8:$rootProject.lifecycleVersion"
@@ -72,5 +70,4 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     androidTestImplementation "androidx.test.ext:junit:$rootProject.androidxJunitVersion"
-
 }
