@@ -34,9 +34,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_margin="8dp"
         android:background="#333"
         android:padding="5dp"
-        android:layout_margin="8dp"
         android:text="TextView"
         android:textColor="#fff" />
 
@@ -80,9 +80,9 @@
 
         <TextView
             android:id="@+id/textView4"
-            android:layout_gravity="center"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="71dp"
+            android:layout_gravity="center"
             android:layout_weight="1"
             android:text="TextView" />
     </LinearLayout>
