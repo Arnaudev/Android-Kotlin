@@ -1,8 +1,0 @@
-<resources>
-    <string name="app_name">BuildUIwithLayoutEditor2</string>
-    <string name="firstname">firstnames</string>
-    <string name="lastname">lastnames</string>
-    <string name="jobtitle">jobtitles</string>
-    <string name="employee_information">employeeInfo</string>
-    <string name="basic_text">loream...</string>
-</resources>
